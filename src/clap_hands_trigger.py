@@ -2,6 +2,7 @@
 import numpy as np
 import aiy.voicehat
 import aiy.audio
+import aiy.assistant.grpc
 import numpy
 import threading
 
@@ -17,17 +18,28 @@ class ClapRecognizer(object):
 
 def main():
   recorder = aiy.audio.get_recorder()
+  player = aiy.audio.get_player()
+  ciao = aiy.audio.say_audio_data("Ciao", lang="it-IT")
+  non_ho_sentito = aiy.audio.say_audio_data("Non ho sentito, puoi ripetere?", lang="it-IT") 
   recorder.start()  # This starts a recorder thread
   trigger = threading.Event()
   clap_recognizer = ClapRecognizer(trigger)
   recorder.add_processor(clap_recognizer)
   status_ui = aiy.voicehat.get_status_ui()
+  assistant = aiy.assistant.grpc.get_assistant()
   while True:
     status_ui.status("ready")
+    print("waiting for input")
     trigger.wait()
     status_ui.status("listening")
     try:
-      aiy.audio.say("Ciao Alessandro!", lang="it-IT")
+      player.play_bytes(*ciao)
+      text, audio = assistant.recognize()
+      if text is not None:
+        print("your question was", text)
+        aiy.audio.play_audio(audio)
+      else:
+        player.play_bytes(*non_ho_sentito)
     except Exception as e:
       print("there was an error:", e)
     trigger.clear()

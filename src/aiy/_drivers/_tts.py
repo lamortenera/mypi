@@ -19,6 +19,7 @@ import logging
 import os
 import subprocess
 import tempfile
+import wave
 from aiy import i18n
 
 # Path to a tmpfs directory to avoid SD card wear
@@ -33,7 +34,7 @@ def create_say(player):
     return functools.partial(say, player, lang=lang)
 
 
-def say(player, words, lang='en-US'):
+def say_to_wav(callback, words, lang='en-US'):
     """Say the given words with TTS.
 
     Args:
@@ -50,10 +51,21 @@ def say(player, words, lang='en-US'):
     words = '<volume level="60"><pitch level="130">%s</pitch></volume>' % words
     try:
         subprocess.call(['pico2wave', '--lang', lang, '-w', tts_wav, words])
-        player.play_wav(tts_wav)
+        return callback(tts_wav)
     finally:
         os.unlink(tts_wav)
 
+def say(player, words, lang='en-US'):
+    say_to_wav(player.play_wav, words, lang)
+
+def say_audio_data(words, lang='en-US'):
+    def fun(wave_path):
+        with wave.open(wave_path, 'r') as wav:
+            frames = wav.readframes(wav.getnframes())
+            return frames, wav.getframerate(), wav.getsampwidth()
+    return say_to_wav(fun, words, lang)
+    
+      
 
 def _main():
     import argparse

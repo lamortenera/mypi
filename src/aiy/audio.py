@@ -102,10 +102,10 @@ def play_wave(wave_file):
     player.play_wav(wave_file)
 
 
-def play_audio(audio_data):
+def play_audio(audio_data, sample_width=AUDIO_SAMPLE_SIZE, sample_rate=AUDIO_SAMPLE_RATE_HZ):
     """Plays the given audio data."""
     player = get_player()
-    player.play_bytes(audio_data, sample_width=AUDIO_SAMPLE_SIZE, sample_rate=AUDIO_SAMPLE_RATE_HZ)
+    player.play_bytes(audio_data, sample_width=sample_width, sample_rate=sample_rate)
 
 
 def say(words, lang=None):
@@ -118,6 +118,10 @@ def say(words, lang=None):
         lang = aiy.i18n.get_language_code()
     aiy._drivers._tts.say(aiy.audio.get_player(), words, lang=lang)
 
+def say_audio_data(words, lang=None):
+    if not lang:
+        lang = aiy.i18n.get_language_code()
+    return aiy._drivers._tts.say_audio_data(words, lang=lang)
 
 def get_status_ui():
     """Returns a driver to access the StatusUI daemon.
