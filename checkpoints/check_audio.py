@@ -108,7 +108,7 @@ def do_checks():
 how to setup the voiceHAT driver: https://git.io/v99yK"""))
         return
 
-    if not check_voicehat_is_first_card():
+    if False: #not check_voicehat_is_first_card():
         print(textwrap.fill(
             """The voiceHAT not the first sound device, so the voice recognizer
 may be unable to find it. Please try removing other sound drivers."""))

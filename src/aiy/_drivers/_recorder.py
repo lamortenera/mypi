@@ -39,7 +39,7 @@ class Recorder(threading.Thread):
 
     CHUNK_S = 0.1
 
-    def __init__(self, input_device='default',
+    def __init__(self, input_device='voicehat',
                  channels=1, bytes_per_sample=2, sample_rate_hz=16000):
         """Create a Recorder with the given audio format.
 

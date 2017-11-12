@@ -26,10 +26,10 @@ logger = logging.getLogger('audio')
 class Player(object):
     """Plays short audio clips from a buffer or file."""
 
-    def __init__(self, output_device='default'):
+    def __init__(self, output_device='voicehat'):
         self._output_device = output_device
 
-    def play_bytes(self, audio_bytes, sample_rate, sample_width=2):
+    def play_bytes(self, audio_bytes, sample_rate, sample_width=4):
         """Play audio from the given bytes-like object.
 
         Args:
@@ -47,7 +47,6 @@ class Player(object):
             '-f', aiy._drivers._alsa.sample_width_to_string(sample_width),
             '-r', str(sample_rate),
         ]
-
         aplay = subprocess.Popen(cmd, stdin=subprocess.PIPE)
         aplay.stdin.write(audio_bytes)
         aplay.stdin.close()
